@@ -1,8 +1,29 @@
 import Image from "next/image"
+import Link from "next/link"
+import {  useState, useEffect } from 'react'
+import {  AiOutlineSearch, AiOutlineUser } from 'react-icons/ai'
+import {  BiBellMinus } from 'react-icons/bi'
 
 const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
+
   return (
-    <header>
+    <header className={`${scrolled && 'bg-[#E10856] shadow-lg'}`}>
       <div className="flex items-center space-x-2 md:space-x-10">
         <Image src={"/logo.svg"} alt='logo' width={56} height={56} className='cursor-pointer object-contain' />
 
@@ -14,7 +35,14 @@ const Header = () => {
           <li className="navLink">Popular</li>
         </ul>
 
-        <div></div>
+      </div>
+      <div className="flex items-center space-x-4 text-sm font-light">
+        <AiOutlineSearch className="w-6 h-6 cursor-pointer" />
+        <p className="hidden lg:inline">Kids</p>
+        <BiBellMinus className="w-6 h-6 cursor-pointer" />
+        <Link href={'/account'}>
+          <AiOutlineUser className="w-6 h-6 cursor-pointer" />
+        </Link>
       </div>
     </header>
   )
