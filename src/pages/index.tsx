@@ -1,11 +1,12 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-import { Header, Hero } from "src/components";
+import { Header, Hero, Raw } from "src/components";
 import { IMovie } from "src/interfaces/app.interface";
 import { API_REQUEST } from "src/services/api.service";
 
-export default function Home({ trending }: HomeProps): JSX.Element {
+export default function Home({ trending, topRated }: HomeProps): JSX.Element {
+  console.log(topRated, "topRated");
   return (
     <div className="relative h-[200vh]">
       <Head>
@@ -20,6 +21,7 @@ export default function Home({ trending }: HomeProps): JSX.Element {
         <Hero trending={trending} />
         <section>
           {/* Raw */}
+          <Raw title={"Top Rated"} movies={topRated} />
           {/* BigRaw */}
           {/* Raw */}
           {/* BigRaw */}
@@ -31,14 +33,17 @@ export default function Home({ trending }: HomeProps): JSX.Element {
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const trending = await fetch(API_REQUEST.trending).then((res) => res.json());
+  const topRated = await fetch(API_REQUEST.top_rated).then((res) => res.json());
 
   return {
     props: {
       trending: trending.results,
+      topRated: topRated.results,
     },
   };
 };
 
 interface HomeProps {
   trending: IMovie[];
+  topRated: IMovie[];
 }
