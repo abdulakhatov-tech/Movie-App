@@ -1,18 +1,11 @@
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useEffect } from 'react'
+import { Header, Hero } from 'src/components';
+import { IMovie } from 'src/interfaces/app.interface';
 import { API_REQUEST } from 'src/services/api.service'
-import { Header } from './components'
 
-export default function Home(props:HomeProps): JSX.Element {
-  console.log(props);
-  
-
-  useEffect(() => {
-    fetch(API_REQUEST.trending).then(res => res.json()).then(data => console.log(data))
-  }, [])
-  
-
+export default function Home({ trending }:HomeProps): JSX.Element {
   return (
     <div className='relative h-[200vh]'>
       <Head>
@@ -21,9 +14,10 @@ export default function Home(props:HomeProps): JSX.Element {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.svg" />
       </Head>
-      <Header />
-      <main>
+      <Header  />
+      <main className='relative pl-4 pb-24 lg:space-y-24 lg:pl-16'>
         {/* Hero */}
+        <Hero trending={trending} />
         <section>
           {/* Raw */}
           {/* BigRaw */}
@@ -38,22 +32,13 @@ export default function Home(props:HomeProps): JSX.Element {
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const trending = await fetch(API_REQUEST.trending).then(res => res.json())
 
-  // if (trending.results.length) {
-  //   return {
-  //     redirect: {
-  //       destination: '/account'
-  //     }
-  //   }
-  // }
-
   return {
     props: {
-      message: 'Message from SSR',
-      trending: trending
+      trending: trending.results
     }
   }
 }
 
 interface HomeProps {
-  message:any
+  trending:IMovie[]
 }
