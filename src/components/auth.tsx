@@ -1,8 +1,5 @@
-
 const AuthComponent = () => {
-  return (
-    <div>AuthComponent</div>
-  )
-}
+  return <div>AuthComponent</div>;
+};
 
-export default AuthComponent
+export default AuthComponent;
