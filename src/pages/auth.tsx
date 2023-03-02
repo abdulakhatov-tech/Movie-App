@@ -1,18 +1,25 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { TextField } from "src/components";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { AuthContext } from "src/context/auth.context";
 
 export const Auth = () => {
   const [auth, setAuth] = useState<"signin" | "signup">("signin");
+  const { error, isLoading, logOut, signIn, signUp } = useContext(AuthContext);
 
   const toggleAuth = (state: "signin" | "signup") => {
     setAuth(state);
   };
 
   const onSubmit = (formData: { email: string; password: string }) => {
+    if (auth === "signup") {
+      signUp(formData.email, formData.password);
+    } else {
+      signIn(formData.email, formData.password);
+    }
     console.log(formData);
   };
 
@@ -21,7 +28,7 @@ export const Auth = () => {
       .email("Enter valid email")
       .required("Email is required"),
     password: Yup.string()
-      .min(4, "4 minimum character")
+      .min(6, "6 minimum character")
       .required("Password is required"),
   });
 
@@ -56,6 +63,9 @@ export const Auth = () => {
         <h1 className="text-4xl font-semibold">
           {auth === "signin" ? "Sign In" : "Sign Up"}
         </h1>
+        {error && (
+          <p className="text-red-500 font-semibold text-center">{error}</p>
+        )}
         <Formik
           initialValues={{ email: "", password: "" }}
           onSubmit={onSubmit}
@@ -69,19 +79,16 @@ export const Auth = () => {
                 type="password"
               />
 
-              {auth === "signin" ? (
-                <button
-                  type="submit"
-                  className="w-full bg-[#E10856] py-3 font-semibold">
-                  Sign In
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="w-full bg-[#E10856] py-3 font-semibold">
-                  Sign Up
-                </button>
-              )}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#E10856] py-3 font-semibold">
+                {isLoading
+                  ? "Loading..."
+                  : auth === "signin"
+                  ? "Sign In"
+                  : "Sign Up"}
+              </button>
 
               {auth === "signin" ? (
                 <div className="text-[gray]">
