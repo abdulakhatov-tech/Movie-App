@@ -5,6 +5,7 @@ import { Header, Hero, Raw } from "src/components";
 import { AuthContext } from "src/context/auth.context";
 import { IMovie } from "src/interfaces/app.interface";
 import { API_REQUEST } from "src/services/api.service";
+import { useInfoStore } from "src/store";
 
 export default function Home({
   trending,
@@ -16,11 +17,11 @@ export default function Home({
   comedy,
   history,
 }: HomeProps): JSX.Element {
+  const { setModal, modal } = useInfoStore();
   const { isLoading } = useContext(AuthContext);
 
   if (isLoading) return <>{null}</>;
 
-  console.log(topRated, "topRated");
   return (
     <div className="relative min-h-screen">
       <Head>
