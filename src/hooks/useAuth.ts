@@ -3,12 +3,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
   User,
 } from "firebase/auth";
 
 import { auth } from "src/firebase";
-import { async } from "@firebase/util";
 import { useRouter } from "next/router";
 
 export const useAuth = () => {
@@ -62,5 +60,7 @@ export const useAuth = () => {
     signIn,
     signUp,
     logOut,
+    setUser,
+    setIsLoading,
   };
 };

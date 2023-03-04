@@ -5,10 +5,17 @@ import { TextField } from "src/components";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { AuthContext } from "src/context/auth.context";
+import { useRouter } from "next/router";
 
 export const Auth = () => {
   const [auth, setAuth] = useState<"signin" | "signup">("signin");
-  const { error, isLoading, logOut, signIn, signUp } = useContext(AuthContext);
+  const { error, isLoading, signIn, signUp, user } = useContext(AuthContext);
+  const router = useRouter();
+
+  if (user) {
+    router.push("/");
+  }
+  if (!isLoading) return <>Loading...</>;
 
   const toggleAuth = (state: "signin" | "signup") => {
     setAuth(state);
@@ -20,7 +27,6 @@ export const Auth = () => {
     } else {
       signIn(formData.email, formData.password);
     }
-    console.log(formData);
   };
 
   const validation = Yup.object({
