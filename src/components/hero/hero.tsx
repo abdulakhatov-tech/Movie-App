@@ -5,14 +5,21 @@ import { IMovie } from "src/interfaces/app.interface";
 import { HeroProps } from "./hero.props";
 import { TbPlayerPlay } from "react-icons/tb";
 import ReactStars from "react-stars";
+import { useInfoStore } from "src/store";
 
 const Hero = ({ trending }: HeroProps): JSX.Element => {
+  const { setModal, setCurrentMovie } = useInfoStore();
   const [movie, setMovie] = useState<IMovie>({} as IMovie);
 
   useEffect(() => {
     const randomMovie = trending[Math.floor(Math.random() * trending.length)];
     setMovie(randomMovie);
   }, [trending]);
+
+  const handleCurrentMovie = () => {
+    setModal(true);
+    setCurrentMovie(movie);
+  };
 
   return (
     <div className="flex flex-col space-y-2 py-20 md:space-y-4 lg:h-[65vh] lg:pb-12 lg:justify-center">
@@ -46,7 +53,9 @@ const Hero = ({ trending }: HeroProps): JSX.Element => {
         {movie?.overview?.slice(0, 100)}...
       </p>
       <div>
-        <button className="bg-white/60 font-bold text-black w-[200px] h-[56px] rounded-full flex justify-center items-center gap-2">
+        <button
+          onClick={handleCurrentMovie}
+          className="bg-white/60 font-bold hover:bg-white/80 transition-all text-black w-[200px] h-[56px] rounded-full flex justify-center items-center gap-2">
           <TbPlayerPlay className="w-5 h-5 md:h-6 md:w-6" />
           Watch Now
         </button>

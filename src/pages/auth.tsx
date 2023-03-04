@@ -12,10 +12,10 @@ export const Auth = () => {
   const { error, isLoading, signIn, signUp, user } = useContext(AuthContext);
   const router = useRouter();
 
+  // if (!isLoading) return <>Loading...</>;
   if (user) {
     router.push("/");
   }
-  if (!isLoading) return <>Loading...</>;
 
   const toggleAuth = (state: "signin" | "signup") => {
     setAuth(state);
