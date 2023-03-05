@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import MuiModal from "@mui/material/Modal";
 import { useInfoStore } from "src/store";
-import { FaPlay, FaTimes } from "react-icons/fa";
+import { FaPlay, FaTimes, FaPause } from "react-icons/fa";
 import { Element } from "src/interfaces/app.interface";
 import ReactPlayer from "react-player";
 import { BiPlus } from "react-icons/bi";
 import { BsVolumeMute, BsVolumeDown } from "react-icons/bs";
-import { AiOutlineLike } from "react-icons/ai";
+import {
+  AiOutlineLike,
+  AiFillFastForward,
+  AiOutlineFullscreen,
+} from "react-icons/ai";
+import { MdReplay10 } from "react-icons/md";
 
 const Modal = () => {
   const { modal, setModal, currentMovie } = useInfoStore();
   const [trailer, setTrailer] = useState<string>("");
   const [muted, setMuted] = useState<boolean>(true);
+  const [playing, setPlaying] = useState<boolean>(true);
+  const playerRef = useRef<any>(100);
 
   const base_url = process.env.NEXT_PUBLIC_API_DOMAIN as string;
   const api_key = process.env.NEXT_PUBLIC_API_KEY as string;
@@ -41,8 +48,6 @@ const Modal = () => {
     // eslint-disable-next-line
   }, [currentMovie]);
 
-  console.log(trailer, "trails");
-
   return (
     <MuiModal
       open={modal}
@@ -62,17 +67,48 @@ const Modal = () => {
             url={`https://www.youtube.com/watch?v=${trailer}`}
             width={"100%"}
             height={"100%"}
-            playing
+            playing={playing}
             muted={muted}
+            ref={playerRef}
             style={{ position: "absolute", top: "0", left: "0" }}
           />
 
-          <div className="absolute bottom-10 flex w-full items-center justify-between px-18">
+          <div className="absolute bottom-10 left-10 flex w-full items-center justify-between px-18">
             <div className="flex space-x-2">
-              <button className="flex items-center gapx-2 rounded bg-white px-8 py-2 text-xl font-bold text-black transition hover:bg-[#e6e6e6]">
-                <FaPlay className="h-7 w-7 text-black" />
-                Play
+              {!playing ? (
+                <button
+                  onClick={() => setPlaying(true)}
+                  className="flex items-center gap-[5px] rounded bg-white px-8 py-2 text-xl font-bold text-black transition hover:bg-[#e6e6e6]">
+                  <FaPlay className="h-7 w-7 text-black" />
+                  Play
+                </button>
+              ) : (
+                <button
+                  onClick={() => setPlaying(false)}
+                  className="flex items-center gap-[5px] rounded bg-white px-8 py-2 text-xl font-bold text-black transition hover:bg-[#e6e6e6]">
+                  <FaPause className="h-7 w-7 text-black" />
+                  Pause
+                </button>
+              )}
+              <button
+                onClick={() =>
+                  playerRef.current.seekTo(
+                    playerRef.current.getCurrentTime() - 10
+                  )
+                }
+                className="modalButton">
+                <MdReplay10 className="w-6 h-6" />
               </button>
+              <button
+                onClick={() =>
+                  playerRef.current.seekTo(
+                    playerRef.current.getCurrentTime() + 10
+                  )
+                }
+                className="modalButton ">
+                <MdReplay10 className="w-6 h-6 -rotate-[180deg]" />
+              </button>
+
               <button className="modalButton">
                 <BiPlus className="w-6 h-6" />
               </button>
