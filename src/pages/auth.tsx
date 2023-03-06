@@ -1,15 +1,15 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { TextField } from "src/components";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { AuthContext } from "src/context/auth.context";
 import { useRouter } from "next/router";
+import { useAuth } from "src/hooks/useAuth";
 
 export const Auth = () => {
   const [auth, setAuth] = useState<"signin" | "signup">("signin");
-  const { error, isLoading, signIn, signUp, user } = useContext(AuthContext);
+  const { error, isLoading, signIn, signUp, user, setIsLoading } = useAuth();
   const router = useRouter();
 
   // if (!isLoading) return <>Loading...</>;
@@ -21,8 +21,15 @@ export const Auth = () => {
     setAuth(state);
   };
 
-  const onSubmit = (formData: { email: string; password: string }) => {
+  const onSubmit = async (formData: { email: string; password: string }) => {
     if (auth === "signup") {
+      setIsLoading(true);
+      const response = await fetch("/api/customer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
+      await response.json();
       signUp(formData.email, formData.password);
     } else {
       signIn(formData.email, formData.password);
@@ -88,7 +95,7 @@ export const Auth = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#E10856] py-3 font-semibold">
+                className="w-full bg-[#E10856] py-4 rounded font-semibold">
                 {isLoading
                   ? "Loading..."
                   : auth === "signin"
