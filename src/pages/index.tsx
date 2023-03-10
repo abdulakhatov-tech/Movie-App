@@ -1,7 +1,8 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { Header, Hero, Modal, Raw, SubscriptionPlan } from "src/components";
-import { IMovie, Product } from "src/interfaces/app.interface";
+import { getList } from "src/helpers/lists";
+import { IMovie, MyList, Product } from "src/interfaces/app.interface";
 import { API_REQUEST } from "src/services/api.service";
 import { useInfoStore } from "src/store";
 
@@ -16,14 +17,16 @@ export default function Home({
   history,
   products,
   subscription,
+  list,
 }: HomeProps): JSX.Element {
   const { modal } = useInfoStore();
+  console.log(list, "list");
 
   if (!subscription.length) return <SubscriptionPlan products={products} />;
 
   return (
     <div
-      className={`relative min-h-screen ${
+      className={`relative min-h-screen bg-gradient-to-b from-gray-900/70 ${
         modal && "!h-screen overflow-hidden"
       }`}>
       <Head>
@@ -40,7 +43,8 @@ export default function Home({
           {/* Raw */}
           <Raw title={"Top Rated"} movies={topRated} />
           <Raw title={"TV Show"} movies={tvTopRated} isBig={true} />
-          <Raw title={"Popular"} movies={popular} />
+          {list.length && <Raw title={"My List"} movies={list} />}
+
           <Raw
             title={"Documentary"}
             movies={documentary.reverse()}
@@ -95,6 +99,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
     fetch(`${API_REQUEST.subscription}/${user_id}`).then((res) => res.json()),
   ]);
 
+  const myList: MyList[] = await getList(user_id);
+
   return {
     props: {
       trending: trending.results,
@@ -107,6 +113,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
       history: history.results,
       products: products.products.data,
       subscription: subscription.subscription.data,
+      list: myList.map((c) => c.product),
     },
   };
 };
@@ -122,4 +129,5 @@ interface HomeProps {
   history: IMovie[];
   products: Product[];
   subscription: string[];
+  list: IMovie[];
 }

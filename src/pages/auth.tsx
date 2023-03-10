@@ -45,7 +45,7 @@ export const Auth = () => {
       </Head>
 
       <Image
-        src={"https://rb.gy/p2hphi"}
+        src={"https://cutewallpaper.org/23/website-wallpaper-hd/27441583.jpg"}
         alt={"bg"}
         fill
         className="object-cover -z-10 !hidden sm:!inline opacity-5"
